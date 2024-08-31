@@ -1,34 +1,77 @@
-import React from 'react';
 import Header from '../components/Header';
 import { bookData } from '../types/bookData';
 import { readingLogEntry } from '../types/readingLogEntry';
-import ErrorModal from '../components/ErrorModal';
+import React, { useEffect, useState } from 'react';
 
 const Read = () => {
-    let bookInfo : bookData[] = JSON.parse(localStorage.getItem("books") ?? "[]");
+    let bookInfo: bookData[] = JSON.parse(localStorage.getItem("books") ?? "[]");
 
-    function sendError(message : string) {
+    const [title, setTitle] = useState(document.getElementById("entry-create-title")?.children[0].textContent ?? "");
+    const [startPage, setStartPage] = useState(0);
+    const [endPage, setEndPage] = useState(0);
+    const [startTime, setStartTime] = useState(new Date());
+    const [endTime, setEndTime] = useState(new Date());
+    const [timerRunning, setTimerRunning] = useState(false);
+
+    useEffect(() => {
+        checkEntry();
+    }, [title, startPage, endPage, startTime, endTime]);
+
+
+    function sendError(message: string) {
         let modal = document.createElement("div");
-        modal.id = "error-modal";
         document.body.appendChild(modal);
         modal.innerHTML = `<ErrorModal message="${message}" />`;
     }
 
-    function saveEntry(e : React.MouseEvent) {
-        let entry : readingLogEntry = {
-            title: (document.getElementById("entry-create-title") as HTMLInputElement).value,
-            startPage: Number((document.getElementById("entry-create-start") as HTMLInputElement).value),
-            endPage: Number((document.getElementById("entry-create-end") as HTMLInputElement).value),
-            startTime: new Date((document.getElementById("entry-create-start-time") as HTMLInputElement).value),
-            endTime: new Date((document.getElementById("entry-create-end-time") as HTMLInputElement).value),
+    function storeEntry(entry: readingLogEntry) {
+        let entries: readingLogEntry[] = JSON.parse(localStorage.getItem("logs") ?? "[]");
+        entries.push(entry);
+        localStorage.setItem("logs", JSON.stringify(entries));
+    }
+
+    function checkEntry(submit: boolean = false) {
+        console.log(title, startPage, endPage, startTime, endTime);
+        let entry: readingLogEntry = {
+            title: title,
+            startPage: startPage,
+            endPage: endPage,
+            startTime: startTime,
+            endTime: endTime,
+        }
+        const book = bookInfo.find((book: bookData) => book.title === entry.title);
+
+        if (!book) {
+            sendError("Title not found. Try adding it first");
+            return false;
         }
 
         if (entry.endTime < entry.startTime) {
             sendError("End time must be after start time");
-            return;
+            return false;
         }
-        console.log(entry);
-        e.preventDefault();
+
+        if (entry.startPage < book.pagesRead) {
+            sendError("You must start reading after the last page read");
+            return false;
+        }
+
+        if (entry.endPage < entry.startPage) {
+            sendError("End page must be after start page");
+            return false;
+        }
+
+        if (entry.endPage > book.pages) {
+            sendError("End page cannot be greater than total pages");
+            return false;
+        }
+
+        if (submit) {
+            storeEntry(entry);
+            book.pagesRead = entry.endPage;
+        }
+
+        return true;
     }
 
 
@@ -47,7 +90,7 @@ const Read = () => {
                         {
                             bookInfo.map((book: bookData, index: number) => {
                                 return (
-                                    <option key={index} value={book.title}>{book.title + `(${book.pages} pages)`}</option>
+                                    <option key={index} value={book.title}>{book.title + ` (${book.pages} pages)`}</option>
                                 )
                             })
                         }
@@ -56,7 +99,15 @@ const Read = () => {
 
                     <label htmlFor="startPage" className="text-white text-center w-full flex justify-between">
                         <span>Start Page</span>
-                        <input type="number" id="entry-create-start" name="startPage" className="text-black" />
+                        <input
+                            type="number"
+                            id="entry-create-start"
+                            name="startPage"
+                            className="text-black"
+                            onChange={(e)=>{
+                                setStartPage(Number((e.target as HTMLInputElement).value))
+                            }}
+                        />
                     </label>
 
                     <label htmlFor="endPage" className="text-white text-center w-full flex justify-between">
@@ -77,8 +128,9 @@ const Read = () => {
                     <input
                         id="entry-create-button"
                         type="button"
+                        disabled={!timerRunning && checkEntry()}
                         className="bg-blue-900 p-4 rounded-lg"
-                        onClick={(e) => saveEntry(e)}
+                        onClick={(e) => checkEntry(true)}
                         value={`Save Entry`}
                     />
                 </form>
