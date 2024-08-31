@@ -1,0 +1,31 @@
+@keyframes enter {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    10% {
+        opacity: 1;
+    }
+    30% {
+        transform: translateX(0);
+    }
+    50% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    70% {
+        transform: translateX(0);
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+}
+
+.error-modal {
+  background-color: rgba(255, 0, 0, 0.4);
+  animation: enter 5s both 0.3s ease;
+}

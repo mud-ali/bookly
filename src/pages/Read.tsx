@@ -2,9 +2,17 @@ import React from 'react';
 import Header from '../components/Header';
 import { bookData } from '../types/bookData';
 import { readingLogEntry } from '../types/readingLogEntry';
+import ErrorModal from '../components/ErrorModal';
 
 const Read = () => {
     let bookInfo : bookData[] = JSON.parse(localStorage.getItem("books") ?? "[]");
+
+    function sendError(message : string) {
+        let modal = document.createElement("div");
+        modal.id = "error-modal";
+        document.body.appendChild(modal);
+        modal.innerHTML = `<ErrorModal message="${message}" />`;
+    }
 
     function saveEntry(e : React.MouseEvent) {
         let entry : readingLogEntry = {
@@ -15,6 +23,10 @@ const Read = () => {
             endTime: new Date((document.getElementById("entry-create-end-time") as HTMLInputElement).value),
         }
 
+        if (entry.endTime < entry.startTime) {
+            sendError("End time must be after start time");
+            return;
+        }
         console.log(entry);
         e.preventDefault();
     }
@@ -33,9 +45,9 @@ const Read = () => {
                     </label>
                     <select name="bookName" id="entry-create-title" className='text-black p-3 w-full'>
                         {
-                            bookInfo.map((book: bookData) => {
+                            bookInfo.map((book: bookData, index: number) => {
                                 return (
-                                    <option value={book.title}>{book.title + `(${book.pages} pages)`}</option>
+                                    <option key={index} value={book.title}>{book.title + `(${book.pages} pages)`}</option>
                                 )
                             })
                         }
