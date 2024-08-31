@@ -12,7 +12,7 @@ const Home = () => {
             <Header />
             <main className="home-body">
                 <div className={`w-[4%] min-w-max rounded-lg bg-slate-800 p-8 flex justify-center items-center
-                    text-center text-5xl mx-auto border-2 border-white`}>
+                    text-center text-5xl mx-auto border-2 border-white hover:bg-slate-900 transition-all duration-200 hover:scale-95`}>
                     <Link to="/add">Add Book</Link>
                 </div>
                 <div id="info" className="w-full my-8">
