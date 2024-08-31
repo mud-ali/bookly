@@ -1,14 +1,14 @@
-import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import Router from './router/Router'
+import headerConfig from './config/header';
 
 function App() {
-
-  return (
-    <BrowserRouter>
-      <Router />
-    </BrowserRouter>
-  );
+    document.title = headerConfig.siteName;
+    return (
+        <BrowserRouter>
+            <Router />
+        </BrowserRouter>
+    );
 }
 
-export default App
+export default App;
