@@ -5,3 +5,31 @@ main.home-body {
     padding: 2rem;
     position: relative;
 }
+
+table td + td, table th+th {
+    border-left: 1px solid #000;
+}
+
+td {
+    @apply text-center
+}
+
+table {
+    @apply border-collapse border-red-900 border-2
+}
+
+tr {
+    @apply bg-gray-600
+}
+
+tr:nth-of-type(odd) {
+    @apply bg-gray-700
+}
+
+tr[data-highlight="true"] {
+    @apply bg-green-900 
+}
+
+tr:nth-of-type(odd)[data-highlight="true"] {
+    @apply bg-green-800
+}
