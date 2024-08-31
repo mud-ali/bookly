@@ -4,10 +4,10 @@ div.header {
     justify-content: space-between;
     align-items: center;
     padding: 2rem 20px;
-    background-color: rgb(52, 72, 42);
     margin: 0;
     box-sizing: border-box;
     font-family: 'Ubuntu', sans-serif;
+    @apply bg-gray-600;
 }
 
 div.header a {
