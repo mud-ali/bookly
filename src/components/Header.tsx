@@ -5,7 +5,7 @@ import headerConfig from "../config/header";
 
 const Header = () => {
     return (
-        <header>
+        <div className="header py-4">
             <Link to="/">
                 <h1>{headerConfig.siteName}</h1>
             </Link>
@@ -22,7 +22,7 @@ const Header = () => {
                     }
                 </ul>
             </nav>
-        </header>
+        </div>
     );
 }
 

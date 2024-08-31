@@ -1,26 +1,27 @@
-header {
+div.header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 0 20px;
-    background-color: rgb(222, 32, 42);
+    padding: 2rem 20px;
+    background-color: rgb(52, 72, 42);
     margin: 0;
     box-sizing: border-box;
     font-family: 'Ubuntu', sans-serif;
 }
 
-header a {
+div.header a {
     text-decoration: none;
 }
 
-header h1 {
-    font-family: 'Agdasima', sans-serif;
+div.header h1 {
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 1.7rem;
     letter-spacing: 0.10rem;
     color: white;
 }
 
-header ul {
+div.header ul {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -28,21 +29,21 @@ header ul {
     list-style: none;
 }
 
-header ul li {
+div.header ul li {
     margin: 0 1rem;
 }
 
-header ul li a {
+div.header ul li a {
     text-decoration: none;
     color: rgb(255, 255, 255);
 }
 
 @media screen and (max-width: 768px) {
-    header {
+    div.header {
         flex-direction: column;
     }
     
-    header ul {
+    div.header ul {
         width: 100vw;
         flex-direction: column;
         justify-content: center;
@@ -52,7 +53,7 @@ header ul li a {
         padding: 3vw;
     }
 
-    header ul>li, header ul>li>a {
+    div.header ul>li, div.header ul>li>a {
         box-sizing: border-box;
         margin: 0.5rem auto;
         width: 100%;
