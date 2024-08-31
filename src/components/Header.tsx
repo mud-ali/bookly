@@ -14,7 +14,7 @@ const Header = () => {
                     {
                         headerConfig.links.map((link,i)=>{
                             return (
-                                <li>
+                                <li key={i}>
                                     <Link to={link.href}>{link.name}</Link>
                                 </li>
                             )
