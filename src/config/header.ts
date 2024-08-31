@@ -12,6 +12,18 @@ const headerConfig: {
         {
             href: "/",
             name: "Dashboard"
+        },
+        {
+            href: "/add",
+            name: "Add Book"
+        },
+        {
+            href: "/log",
+            name: "View Your Reading Log"
+        },
+        {
+            href: "/read",
+            name: "Read a Book"
         }
     ]
 };
