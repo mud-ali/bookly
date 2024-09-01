@@ -31,7 +31,7 @@ const Home = () => {
                             {
                                 bookInfo.map((book: bookData, index: number) => {
                                     return (
-                                        <tr data-highlight={String(book.pagesRead === book.pages)}>
+                                        <tr data-highlight={String(book.pagesRead === book.pages)} key={index}>
                                             <td>{index + 1}</td>
                                             <td>{book.title}</td>
                                             <td>{book.author ?? "--"}</td>
