@@ -1,6 +1,6 @@
 export type readingLogEntry = {
-    startTime: Date,
-    endTime: Date,
+    startTime: number,
+    endTime: number,
     title: string,
     startPage: number,
     endPage: number,

@@ -2,6 +2,7 @@ import Header from '../components/Header';
 import { bookData } from '../types/bookData';
 import { readingLogEntry } from '../types/readingLogEntry';
 import React, { useEffect, useState } from 'react';
+import ErrorModal from '../components/ErrorModal';
 import '../css/AddReading.css'
 
 const Read = () => {
@@ -11,8 +12,8 @@ const Read = () => {
 
     const [startPage, setStartPage] = useState(0);
     const [endPage, setEndPage] = useState(0);
-    const [startTime, setStartTime] = useState(new Date());
-    const [endTime, setEndTime] = useState(new Date());
+    const [startTime, setStartTime] = useState(0);
+    const [endTime, setEndTime] = useState(0);
     const [timerRunning, setTimerRunning] = useState(false);
 
     useEffect(() => {
@@ -22,8 +23,7 @@ const Read = () => {
 
     function sendError(message: string) {
         console.error(message);
-        let modal = document.createElement("div");
-        document.body.appendChild(modal);
+        let modal = document.getElementsByClassName('modal-holder')[0] as HTMLDivElement;
         modal.innerHTML = `<ErrorModal message="${message}" />`;
     }
 
@@ -45,20 +45,20 @@ const Read = () => {
             endTime: endTime,
         }
 
-        const book = bookInfo.find((book: bookData) => book.title === entry.title);
-        // console.log(title, startPage, endPage, startTime, endTime);
-        if (!book) {
+        const bookIndex = bookInfo.findIndex((book: bookData) => book.title === entry.title);
+        const book = bookInfo[bookIndex];
+
+        if (book === undefined) {
             sendError(`Title ${entry.title} not found. Try adding it first`);
             return false;
+        } else {
+            console.log(`Book found: ${book.title}`);
         }
 
-        // if (entry.endTime < entry.startTime) {
-        //     sendError(`End time (${entry.endTime.getMilliseconds()}) must be after start time (${entry.startTime.getMilliseconds()})`);
-        //     return false;
-        // }
+        if (startTime === 0 || endTime === 0) return false;
 
         if (entry.startPage < book.pagesRead) {
-            sendError(`You must start reading after the last page read ${entry.startPage} > ${book.pagesRead}`);
+            sendError(`You must start reading after the last page read ${entry.startPage} isnt > ${book.pagesRead}`);
             return false;
         }
 
@@ -72,6 +72,8 @@ const Read = () => {
             return false;
         }
 
+        book.pagesRead = entry.endPage;
+        localStorage.setItem("books", JSON.stringify(bookInfo));
         return entry;
     }
 
@@ -79,6 +81,9 @@ const Read = () => {
     return (
         <>
             <Header />
+            <div className='modal-holder hidden'>
+                <ErrorModal message=''/>
+            </div>
             <main className='h-screen'>
                 <form
                     id="entry-create"
@@ -99,7 +104,7 @@ const Read = () => {
                         {
                             bookInfo.map((book: bookData, index: number) => {
                                 return (
-                                    <option key={index} value={book.title}>{book.title + ` (${book.pages} pages)`}</option>
+                                    <option key={index} value={book.title}>{book.title + ` (${book.pagesRead} / ${book.pages} pages read)`}</option>
                                 )
                             })
                         }
@@ -126,23 +131,24 @@ const Read = () => {
                         }} />
                     </label>
 
-                    <label htmlFor="startTime" className="text-white text-center w-full flex justify-between bg-blue-800 p-4 rounded-lg">
-                        <span id="timer-label">Start Time</span>
-                        <input
-                            type="button"
-                            id="entry-create-start-time"
-                            name="startTime"
-                            className="mx-auto"
-                            onClick={(e) => {
-                                setStartTime(new Date());
-                                document.getElementById("timer-label")!.innerText = "Click to end time";
-                                document.getElementById("entry-create-start-time")!.onclick = (e) => {
-                                    setEndTime(new Date());
-                                    document.getElementById("timer-label")!.parentElement!.style.display = "none";
-                                }
-                            }}
-                        />
-                    </label>
+                    <input
+                        type="button"
+                        id="entry-create-start-time"
+                        name="startTime"
+                        value={!timerRunning ? `Start Time` : `End Time`}
+                        className="mx-auto text-white text-center w-full flex justify-between bg-blue-800 p-4 rounded-lg"
+                        onClick={(e) => {
+                            if (timerRunning) {
+                                setEndTime((new Date()).getTime());
+                                console.log("End time set");
+                                setTimerRunning(!timerRunning);
+                                return;
+                            }
+                            setStartTime((new Date()).getTime());
+                            console.log("Start time set");
+                            setTimerRunning(!timerRunning);
+                        }}
+                    />
 
                     <input
                         id="entry-create-button"
